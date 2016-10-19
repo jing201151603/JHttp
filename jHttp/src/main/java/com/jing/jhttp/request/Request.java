@@ -1,5 +1,6 @@
 package com.jing.jhttp.request;
 
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 
@@ -28,7 +29,7 @@ public class Request implements Runnable {
     public final int result_type_failure = 100;
     public final int result_type_succeed = 1000;
     public final int result_type_update_ui = 10000;
-
+    public final int result_type_update_imageview = 20;
     private int defaultRequestTimes = 3;//默认失败请求次数
     private int requestTimes = defaultRequestTimes;
 
@@ -49,6 +50,10 @@ public class Request implements Runnable {
                     break;
                 case result_type_failure:
                     onRequestListener.failure((String) getResult());
+                    break;
+                case result_type_update_imageview:
+                    if (getResult() == null) getImageView().setImageResource(getFailureImg());
+                    else getImageView().setImageBitmap((Bitmap) getResult());
                     break;
             }
         }

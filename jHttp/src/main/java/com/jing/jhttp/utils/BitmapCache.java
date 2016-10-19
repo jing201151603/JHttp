@@ -36,7 +36,7 @@ public class BitmapCache {
     /**
      * 保存Image的目录名
      */
-    private final static String FOLDER_NAME = "/dxhj";
+    private final static String FOLDER_NAME = "/jcache";
 
 
     public BitmapCache(Context context) {
@@ -55,9 +55,10 @@ public class BitmapCache {
      * @return
      */
     public String getStorageDirectory() {
-        return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) ?
-                mSdRootPath + FOLDER_NAME : mDataRootPath + FOLDER_NAME;
+        return mDataRootPath + FOLDER_NAME;
     }
+//                     return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) ?
+//                mSdRootPath + FOLDER_NAME : mDataRootPath + FOLDER_NAME;
 
     /**
      * 保存Image的方法，有sd卡存储到sd卡，没有就存储到手机目录
@@ -99,7 +100,7 @@ public class BitmapCache {
      * @param bitmap
      */
     public void clearForSpace(Bitmap bitmap) {
-        LogUtils.d("req", "will to clear for ");
+        LogUtils.d("req", "will to clear for newBitmap's space");
         List<Long> keys = sort(SqlManager.getInstance().getjChacheHelper(context).getKeys());
         for (int i = 0; i < keys.size(); i++) {
             double totalSize = FileSizeUtil.getFolderSize(getStorageDirectory()) + getBitmapsize(bitmap);

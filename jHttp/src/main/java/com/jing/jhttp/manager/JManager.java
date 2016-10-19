@@ -1,6 +1,11 @@
 package com.jing.jhttp.manager;
 
+import android.app.Activity;
 import android.content.Context;
+import android.widget.ImageView;
+
+import com.jing.jhttp.request.RequestImage;
+import com.jing.jhttp.request.RequestPool;
 
 /**
  * Created by bmc on 2016/10/18.
@@ -15,11 +20,11 @@ public class JManager {
     }
 
     private static final class ManagerHolder {
-        private static final JManager J_MANAGER = new JManager();
+        private static final JManager jManager = new JManager();
     }
 
     public static final JManager getInstance() {
-        return ManagerHolder.J_MANAGER;
+        return ManagerHolder.jManager;
     }
 
     public void init(Context context) {
@@ -30,7 +35,22 @@ public class JManager {
         return cacheSize;
     }
 
-    public void setCacheSize(int cacheSize) {
+    public JManager setCacheSize(int cacheSize) {
         this.cacheSize = cacheSize;
+        return ManagerHolder.jManager;
     }
+
+    public void request(Activity activity, String url, ImageView imageView, int loadImg, int failureImg) {
+        request(activity, url, imageView, loadImg, failureImg, false);
+    }
+
+    public void request(Activity activity, String url, ImageView imageView, int loadImg, int failureImg, boolean shouldUpdateCache) {
+        request(activity, url, imageView, loadImg, failureImg, shouldUpdateCache, false);
+    }
+
+    public void request(Activity activity, String url, ImageView imageView, int loadImg, int failureImg, boolean shouldUpdateCache, boolean shouldUpdateUi) {
+        RequestImage requestImage = new RequestImage(activity, url, imageView, loadImg, failureImg, null, shouldUpdateCache, shouldUpdateUi);
+        RequestPool.getInstance().addRequest(requestImage);
+    }
+
 }
