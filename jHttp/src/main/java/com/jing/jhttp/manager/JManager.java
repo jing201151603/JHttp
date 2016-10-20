@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.widget.ImageView;
 
+import com.jing.jhttp.listener.OnRequestListener;
+import com.jing.jhttp.request.Request;
+import com.jing.jhttp.request.RequestBitmap;
 import com.jing.jhttp.request.RequestImage;
 import com.jing.jhttp.request.RequestPool;
 
@@ -51,6 +54,19 @@ public class JManager {
     public void request(Activity activity, String url, ImageView imageView, int loadImg, int failureImg, boolean shouldUpdateCache, boolean shouldUpdateUi) {
         RequestImage requestImage = new RequestImage(activity, url, imageView, loadImg, failureImg, null, shouldUpdateCache, shouldUpdateUi);
         RequestPool.getInstance().addRequest(requestImage);
+    }
+
+    public void request(Activity activity, String url, OnRequestListener onRequestListener) {
+        request(activity, url, onRequestListener, false);
+    }
+
+    public void request(Activity activity, String url, OnRequestListener onRequestListener, boolean shouldUpdateCache) {
+        request(activity, url, onRequestListener, false, false);
+    }
+
+    public void request(Activity activity, String url, OnRequestListener onRequestListener, boolean shouldUpdateCache, boolean shouldUpdateUi) {
+        RequestBitmap requestBitmap = new RequestBitmap(activity, url, Request.RequestMethod.GET, onRequestListener, null, false, false);
+        RequestPool.getInstance().addRequest(requestBitmap);
     }
 
 }

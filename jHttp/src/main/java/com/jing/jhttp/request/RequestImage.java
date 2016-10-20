@@ -52,7 +52,8 @@ public class RequestImage extends Request {
         handler.setImageView(imageView);
         handler.setLoadImg(loadImg);
         handler.setFailureImg(failureImg);
-        handler.getImageView().setImageResource(handler.getLoadImg());
+        if (handler.getLoadImg() != 0)
+            handler.getImageView().setImageResource(handler.getLoadImg());
 
         this.shouldUpdateCache = shouldUpdateCache;
         this.shouldUpdateUi = shouldUpdateUi;
