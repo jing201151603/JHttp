@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Message;
 import android.util.DisplayMetrics;
+import android.view.WindowManager;
 
 import com.jing.jhttp.listener.OnRequestListener;
 import com.jing.jhttp.utils.BitmapCache;
@@ -34,7 +35,7 @@ public class RequestBitmap extends Request {
     private BitmapCache bitmapCache = null;
     private Context context;
 
-    public RequestBitmap(Activity activity, String url, RequestMethod method, OnRequestListener onRequestListener) {
+    /*public RequestBitmap(Activity activity, String url, RequestMethod method, OnRequestListener onRequestListener) {
         this(activity, url, method, onRequestListener, null);
     }
 
@@ -54,12 +55,34 @@ public class RequestBitmap extends Request {
         context = activity;
         getPixels(activity);
         bitmapCache = new BitmapCache(activity);
+    }*/
+
+
+    public RequestBitmap(Context context, String url, RequestMethod method, OnRequestListener onRequestListener) {
+        this(context, url, method, onRequestListener, null);
     }
 
-    private void getPixels(Activity activity) {
-        DisplayMetrics dm = new DisplayMetrics();
-        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        displaypixels = dm.widthPixels * dm.heightPixels;
+
+    public RequestBitmap(Context context, String url, RequestMethod method, OnRequestListener onRequestListener, HashMap<String, String> params) {
+        this(context, url, method, onRequestListener, params, false);
+    }
+
+    public RequestBitmap(Context context, String url, RequestMethod method, OnRequestListener onRequestListener, HashMap<String, String> params, boolean shouldUpdateCache) {
+        this(context, url, method, onRequestListener, params, shouldUpdateCache, false);
+    }
+
+    public RequestBitmap(Context context, String url, RequestMethod method, OnRequestListener onRequestListener, HashMap<String, String> params, boolean shouldUpdateCache, boolean shouldUpdateUi) {
+        super(url, method, onRequestListener, params);
+        this.shouldUpdateCache = shouldUpdateCache;
+        this.shouldUpdateUi = shouldUpdateUi;
+        this.context = context;
+        getPixels(context);
+        bitmapCache = new BitmapCache(context);
+    }
+
+    private void getPixels(Context context) {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        displaypixels = wm.getDefaultDisplay().getWidth() * wm.getDefaultDisplay().getHeight();
     }
 
 
