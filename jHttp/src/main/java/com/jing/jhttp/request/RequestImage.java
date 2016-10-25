@@ -1,13 +1,11 @@
 package com.jing.jhttp.request;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.DisplayMetrics;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
-import com.jing.jhttp.listener.OnRequestListener;
 import com.jing.jhttp.utils.BitmapCache;
 import com.jing.jhttp.utils.LogUtils;
 import com.jing.jhttp.utils.TimeUtils;
@@ -33,20 +31,20 @@ public class RequestImage extends Request {
     private BitmapCache bitmapCache = null;
     private Context context;
 
-    public RequestImage(Activity activity, String url, ImageView imageView, int loadImg, int failureImg) {
-        this(activity, url, imageView, loadImg, failureImg, null);
+    public RequestImage(Context context, String url, ImageView imageView, int loadImg, int failureImg) {
+        this(context, url, imageView, loadImg, failureImg, null);
     }
 
 
-    public RequestImage(Activity activity, String url, ImageView imageView, int loadImg, int failureImg, HashMap<String, String> params) {
-        this(activity, url, imageView, loadImg, failureImg, params, false);
+    public RequestImage(Context context, String url, ImageView imageView, int loadImg, int failureImg, HashMap<String, String> params) {
+        this(context, url, imageView, loadImg, failureImg, params, false);
     }
 
-    public RequestImage(Activity activity, String url, ImageView imageView, int loadImg, int failureImg, HashMap<String, String> params, boolean shouldUpdateCache) {
-        this(activity, url, imageView, loadImg, failureImg, params, shouldUpdateCache, false);
+    public RequestImage(Context context, String url, ImageView imageView, int loadImg, int failureImg, HashMap<String, String> params, boolean shouldUpdateCache) {
+        this(context, url, imageView, loadImg, failureImg, params, shouldUpdateCache, false);
     }
 
-    public RequestImage(Activity activity, String url, ImageView imageView, int loadImg, int failureImg, HashMap<String, String> params, boolean shouldUpdateCache, boolean shouldUpdateUi) {
+    public RequestImage(Context context, String url, ImageView imageView, int loadImg, int failureImg, HashMap<String, String> params, boolean shouldUpdateCache, boolean shouldUpdateUi) {
         super(url, RequestMethod.GET, null, params);
 
         handler.setImageView(imageView);
@@ -57,15 +55,18 @@ public class RequestImage extends Request {
 
         this.shouldUpdateCache = shouldUpdateCache;
         this.shouldUpdateUi = shouldUpdateUi;
-        context = activity;
-        bitmapCache = new BitmapCache(activity);
-        getPixels(activity);
+        this.context = context;
+        bitmapCache = new BitmapCache(context);
+        getPixels(context);
     }
 
-    private void getPixels(Activity activity) {
-        DisplayMetrics dm = new DisplayMetrics();
+    private void getPixels(Context context) {
+   /*     DisplayMetrics dm = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        displaypixels = dm.widthPixels * dm.heightPixels;
+        displaypixels = dm.widthPixels * dm.heightPixels;*/
+
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        displaypixels = wm.getDefaultDisplay().getWidth() * wm.getDefaultDisplay().getHeight();
     }
 
 

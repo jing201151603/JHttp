@@ -9,8 +9,4 @@ public interface OnRequestListener<Result> {
 
     void failure(String result);
 
-    void cache(Result result);
-
-    void updateUi(Result result);
-
 }

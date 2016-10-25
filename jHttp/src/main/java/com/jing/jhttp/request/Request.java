@@ -1,10 +1,10 @@
 package com.jing.jhttp.request;
 
 import android.graphics.Bitmap;
-import android.os.Handler;
 import android.os.Message;
 
 import com.jing.jhttp.JHandler;
+import com.jing.jhttp.listener.OnRequestBitmapListener;
 import com.jing.jhttp.listener.OnRequestListener;
 import com.jing.jhttp.utils.LogUtils;
 
@@ -43,10 +43,10 @@ public class Request implements Runnable {
                     onRequestListener.succeed(getResult());
                     break;
                 case result_type_cache:
-                    onRequestListener.cache(getResult());
+                    ((OnRequestBitmapListener) onRequestListener).cache(getResult());
                     break;
                 case result_type_update_ui:
-                    onRequestListener.updateUi(getResult());
+                    ((OnRequestBitmapListener) onRequestListener).updateUi(getResult());
                     break;
                 case result_type_failure:
                     onRequestListener.failure((String) getResult());

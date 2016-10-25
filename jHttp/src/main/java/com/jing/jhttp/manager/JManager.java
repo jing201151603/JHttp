@@ -1,10 +1,9 @@
 package com.jing.jhttp.manager;
 
-import android.app.Activity;
 import android.content.Context;
 import android.widget.ImageView;
 
-import com.jing.jhttp.listener.OnRequestListener;
+import com.jing.jhttp.listener.OnRequestBitmapListener;
 import com.jing.jhttp.request.Request;
 import com.jing.jhttp.request.RequestBitmap;
 import com.jing.jhttp.request.RequestImage;
@@ -43,7 +42,7 @@ public class JManager {
         return ManagerHolder.jManager;
     }
 
-    public void request(Activity activity, String url, ImageView imageView, int loadImg, int failureImg) {
+    /*public void request(Activity activity, String url, ImageView imageView, int loadImg, int failureImg) {
         request(activity, url, imageView, loadImg, failureImg, false);
     }
 
@@ -66,6 +65,32 @@ public class JManager {
 
     public void request(Activity activity, String url, OnRequestListener onRequestListener, boolean shouldUpdateCache, boolean shouldUpdateUi) {
         RequestBitmap requestBitmap = new RequestBitmap(activity, url, Request.RequestMethod.GET, onRequestListener, null, false, false);
+        RequestPool.getInstance().addRequest(requestBitmap);
+    }*/
+
+    public void request(Context context, String url, ImageView imageView, int loadImg, int failureImg) {
+        request(context, url, imageView, loadImg, failureImg, false);
+    }
+
+    public void request(Context context, String url, ImageView imageView, int loadImg, int failureImg, boolean shouldUpdateCache) {
+        request(context, url, imageView, loadImg, failureImg, shouldUpdateCache, false);
+    }
+
+    public void request(Context context, String url, ImageView imageView, int loadImg, int failureImg, boolean shouldUpdateCache, boolean shouldUpdateUi) {
+        RequestImage requestImage = new RequestImage(context, url, imageView, loadImg, failureImg, null, shouldUpdateCache, shouldUpdateUi);
+        RequestPool.getInstance().addRequest(requestImage);
+    }
+
+    public void request(Context context, String url, OnRequestBitmapListener onRequestBitmapListener) {
+        request(context, url, onRequestBitmapListener, false);
+    }
+
+    public void request(Context context, String url, OnRequestBitmapListener onRequestBitmapListener, boolean shouldUpdateCache) {
+        request(context, url, onRequestBitmapListener, false, false);
+    }
+
+    public void request(Context context, String url, OnRequestBitmapListener onRequestBitmapListener, boolean shouldUpdateCache, boolean shouldUpdateUi) {
+        RequestBitmap requestBitmap = new RequestBitmap(context, url, Request.RequestMethod.GET, onRequestBitmapListener, null, false, false);
         RequestPool.getInstance().addRequest(requestBitmap);
     }
 
