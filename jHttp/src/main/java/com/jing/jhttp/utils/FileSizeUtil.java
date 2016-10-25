@@ -48,7 +48,8 @@ public class FileSizeUtil {
         File file = new File(path);
         long size = 0;
         try {
-            java.io.File[] fileList = file.listFiles();
+            File[] fileList = file.listFiles();
+            if (fileList == null || fileList.length <= 0) return 0;
             for (int i = 0; i < fileList.length; i++) {
                 if (fileList[i].isDirectory()) {
                     size = size + getFolderSize(fileList[i].getPath());

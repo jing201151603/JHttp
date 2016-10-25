@@ -26,8 +26,18 @@ public class CacheHelper extends SQLiteOpenHelper {
     private String path = "path";//图片缓存的路径
     public static String tableName = "cache";//表名
 
+    private static CacheHelper cacheHelper;
 
-    public CacheHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+    public static final CacheHelper getInstance(Context context) {
+        if (cacheHelper == null) {
+            synchronized (CacheHelper.class) {
+                cacheHelper = new CacheHelper(context, "jcache.db", null, 1);
+            }
+        }
+        return cacheHelper;
+    }
+
+    private CacheHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
         getDataBase();
     }
@@ -52,7 +62,7 @@ public class CacheHelper extends SQLiteOpenHelper {
 
     }
 
-    public void insert(String url,String key) {
+    public void insert(String url, String key) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(this.url, url);
         contentValues.put(this.time, key);
@@ -63,7 +73,7 @@ public class CacheHelper extends SQLiteOpenHelper {
 
     public void replace(String url, String key) {
         if (TextUtils.isEmpty(getKey(url))) {//为null时不存在，则做插入动作
-            insert(url,key);
+            insert(url, key);
         } else {//不为null时，则更新
             update(url, key);
         }
@@ -83,6 +93,7 @@ public class CacheHelper extends SQLiteOpenHelper {
         String key = "";
         while (cursor.moveToNext()) {
             key = cursor.getString(cursor.getColumnIndex(this.key));
+            cursor.close();
             return key;
         }
         cursor.close();
@@ -97,7 +108,7 @@ public class CacheHelper extends SQLiteOpenHelper {
             keys.add(Long.parseLong(key));
         }
         cursor.close();
-        LogUtils.d("requ",keys.size()+"");
+        LogUtils.d("requ", keys.size() + "");
         return keys;
     }
 
@@ -105,7 +116,7 @@ public class CacheHelper extends SQLiteOpenHelper {
         database.execSQL("delete from cache where key=?;", new String[]{key});
     }
 
-    public void clear(){
+    public void clear() {
         database.execSQL("delete from cache;");
     }
 

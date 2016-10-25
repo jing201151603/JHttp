@@ -93,19 +93,24 @@ public class RequestBitmap extends Request {
                 result = get(url);
                 break;
         }
-        if (result == null) {
+
+
+        if (result == null) {//结果为null则执行重复请求
             resumeRequest();
             return;
         }
 
-
         handler.setResult(result, result_type_succeed);
 
-        if (shouldCache)//是否缓存
+        if (shouldCache) {//是否缓存
             bitmapCache.savaBitmap(TimeUtils.getNow(), result, url);
+            LogUtils.w(getClass().getName(), "will cache and update the bitmap");
+        }
 
-        if (shouldUpdateUi) //是否更新UI
+        if (shouldUpdateUi) {//是否更新UI
             handler.setResult(result, result_type_update_ui);
+            LogUtils.w(getClass().getName(), "will update Ui with bitmap");
+        }
 
     }
 
@@ -117,11 +122,12 @@ public class RequestBitmap extends Request {
     private boolean judgeCache() {
         BitmapCache cache = new BitmapCache(context);
         if (cache.isFileExists(url)) {
-            LogUtils.d(getClass().getName(), "hava cache:" + url);
+            LogUtils.w(getClass().getName(), "hava cache:" + url);
             handler.setResult(cache.getBitmap(url), result_type_cache);
             if (!shouldUpdateCache)
                 return true;
         }
+        LogUtils.w(getClass().getName(), "no cache:" + url);
         return false;
     }
 

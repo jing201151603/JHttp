@@ -38,23 +38,27 @@ public class Request implements Runnable {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            switch (msg.what) {
-                case result_type_succeed:
-                    onRequestListener.succeed(getResult());
-                    break;
-                case result_type_cache:
-                    ((OnRequestBitmapListener) onRequestListener).cache(getResult());
-                    break;
-                case result_type_update_ui:
-                    ((OnRequestBitmapListener) onRequestListener).updateUi(getResult());
-                    break;
-                case result_type_failure:
-                    onRequestListener.failure((String) getResult());
-                    break;
-                case result_type_update_imageview:
-                    if (getResult() == null) getImageView().setImageResource(getFailureImg());
-                    else getImageView().setImageBitmap((Bitmap) getResult());
-                    break;
+            try {
+                switch (msg.what) {
+                    case result_type_succeed:
+                        onRequestListener.succeed(getResult());
+                        break;
+                    case result_type_cache:
+                        ((OnRequestBitmapListener) onRequestListener).cache(getResult());
+                        break;
+                    case result_type_update_ui:
+                        ((OnRequestBitmapListener) onRequestListener).updateUi(getResult());
+                        break;
+                    case result_type_failure:
+                        onRequestListener.failure((String) getResult());
+                        break;
+                    case result_type_update_imageview:
+                        if (getResult() == null) getImageView().setImageResource(getFailureImg());
+                        else getImageView().setImageBitmap((Bitmap) getResult());
+                        break;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     };
@@ -96,10 +100,11 @@ public class Request implements Runnable {
     protected void resumeRequest() {
         handler.setResult("result is null,will request count=" + getRequestTimes(), result_type_failure);
         if (getRequestTimes() > 0) {
+            LogUtils.w(getClass().getName(), "will reconver this request,times:" + getRequestTimes());
             setRequestTimes(getRequestTimes() - 1);
             RequestPool.getInstance().addRequest(this);
             LogUtils.d(getClass().getName(), "resume this request count:" + getRequestTimes());
-        }
+        } else handler.setResult("request times all failure", result_type_failure);
         return;
     }
 

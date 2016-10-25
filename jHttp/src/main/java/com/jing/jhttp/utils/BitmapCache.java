@@ -100,7 +100,11 @@ public class BitmapCache {
      * @param bitmap
      */
     public void clearForSpace(Bitmap bitmap) {
-        LogUtils.d("req", "will to clear for newBitmap's space");
+        if ((FileSizeUtil.getFolderSize(getStorageDirectory()) + getBitmapsize(bitmap)) < JManager.getInstance().getCacheSize()) {
+            LogUtils.w(getClass().getName(), "hava enough space for newBitmap");
+            return;
+        }
+        LogUtils.w(getClass().getName(), "will to clear for newBitmap's space");
         List<Long> keys = sort(SqlManager.getInstance().getjChacheHelper(context).getKeys());
         for (int i = 0; i < keys.size(); i++) {
             double totalSize = FileSizeUtil.getFolderSize(getStorageDirectory()) + getBitmapsize(bitmap);
@@ -110,7 +114,7 @@ public class BitmapCache {
 
                 totalSize = FileSizeUtil.getFolderSize(getStorageDirectory()) + getBitmapsize(bitmap);
                 if (totalSize < JManager.getInstance().getCacheSize()) return;
-                LogUtils.d("req", "temp=" + (temp++) + ",total=" + totalSize / 1024 / 1024 + ",max=" + JManager.getInstance().getCacheSize() / 1024 / 1024);
+                LogUtils.w("req", "temp=" + (temp++) + ",total=" + totalSize / 1024 / 1024 + ",max=" + JManager.getInstance().getCacheSize() / 1024 / 1024);
                 clearForSpace(bitmap);
             } else return;
         }

@@ -82,14 +82,14 @@ public class JManager {
     }
 
     public void request(Context context, String url, OnRequestBitmapListener onRequestBitmapListener) {
-        request(context, url, onRequestBitmapListener, false);
+        request(context, url, false, onRequestBitmapListener);
     }
 
-    public void request(Context context, String url, OnRequestBitmapListener onRequestBitmapListener, boolean shouldUpdateCache) {
-        request(context, url, onRequestBitmapListener, false, false);
+    public void request(Context context, String url, boolean shouldUpdateCache, OnRequestBitmapListener onRequestBitmapListener) {
+        request(context, url, false, false, onRequestBitmapListener);
     }
 
-    public void request(Context context, String url, OnRequestBitmapListener onRequestBitmapListener, boolean shouldUpdateCache, boolean shouldUpdateUi) {
+    public void request(Context context, String url, boolean shouldUpdateCache, boolean shouldUpdateUi, OnRequestBitmapListener onRequestBitmapListener) {
         RequestBitmap requestBitmap = new RequestBitmap(context, url, Request.RequestMethod.GET, onRequestBitmapListener, null, false, false);
         RequestPool.getInstance().addRequest(requestBitmap);
     }
