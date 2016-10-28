@@ -1,10 +1,10 @@
 package com.jing.jhttp.request;
 
 import android.graphics.Bitmap;
-import android.os.Handler;
 import android.os.Message;
 
 import com.jing.jhttp.JHandler;
+import com.jing.jhttp.listener.OnRequestBitmapListener;
 import com.jing.jhttp.listener.OnRequestListener;
 import com.jing.jhttp.utils.LogUtils;
 
@@ -32,33 +32,44 @@ public class Request implements Runnable {
     public final int result_type_update_imageview = 20;
     private int defaultRequestTimes = 3;//默认失败请求次数
     private int requestTimes = defaultRequestTimes;
-
+    protected boolean isFinish = false;
 
     protected JHandler handler = new JHandler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            switch (msg.what) {
-                case result_type_succeed:
-                    onRequestListener.succeed(getResult());
-                    break;
-                case result_type_cache:
-                    onRequestListener.cache(getResult());
-                    break;
-                case result_type_update_ui:
-                    onRequestListener.updateUi(getResult());
-                    break;
-                case result_type_failure:
-                    onRequestListener.failure((String) getResult());
-                    break;
-                case result_type_update_imageview:
-                    if (getResult() == null) getImageView().setImageResource(getFailureImg());
-                    else getImageView().setImageBitmap((Bitmap) getResult());
-                    break;
+            try {
+                switch (msg.what) {
+                    case result_type_succeed:
+                        onRequestListener.succeed(getResult());
+                        break;
+                    case result_type_cache:
+                        ((OnRequestBitmapListener) onRequestListener).cache(getResult());
+                        break;
+                    case result_type_update_ui:
+                        ((OnRequestBitmapListener) onRequestListener).updateUi(getResult());
+                        break;
+                    case result_type_failure:
+                        onRequestListener.failure((String) getResult());
+                        break;
+                    case result_type_update_imageview:
+                        if (getResult() == null) getImageView().setImageResource(getFailureImg());
+                        else getImageView().setImageBitmap((Bitmap) getResult());
+                        break;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     };
 
+    public boolean isFinish() {
+        return isFinish;
+    }
+
+    public void setFinish(boolean finish) {
+        isFinish = finish;
+    }
 
     public Request(String url, RequestMethod method, OnRequestListener onRequestListener) {
         this.url = url;
@@ -96,10 +107,11 @@ public class Request implements Runnable {
     protected void resumeRequest() {
         handler.setResult("result is null,will request count=" + getRequestTimes(), result_type_failure);
         if (getRequestTimes() > 0) {
+            LogUtils.w(getClass().getName(), "will reconver this request,times:" + getRequestTimes());
             setRequestTimes(getRequestTimes() - 1);
             RequestPool.getInstance().addRequest(this);
             LogUtils.d(getClass().getName(), "resume this request count:" + getRequestTimes());
-        }
+        } else handler.setResult("request times all failure", result_type_failure);
         return;
     }
 

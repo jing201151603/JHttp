@@ -1,12 +1,8 @@
 package com.jing.jhttp.request;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Handler;
-import android.os.Message;
-import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
 import com.jing.jhttp.listener.OnRequestListener;
@@ -34,29 +30,6 @@ public class RequestBitmap extends Request {
     private int displaypixels;
     private BitmapCache bitmapCache = null;
     private Context context;
-
-    /*public RequestBitmap(Activity activity, String url, RequestMethod method, OnRequestListener onRequestListener) {
-        this(activity, url, method, onRequestListener, null);
-    }
-
-
-    public RequestBitmap(Activity activity, String url, RequestMethod method, OnRequestListener onRequestListener, HashMap<String, String> params) {
-        this(activity, url, method, onRequestListener, params, false);
-    }
-
-    public RequestBitmap(Activity activity, String url, RequestMethod method, OnRequestListener onRequestListener, HashMap<String, String> params, boolean shouldUpdateCache) {
-        this(activity, url, method, onRequestListener, params, shouldUpdateCache, false);
-    }
-
-    public RequestBitmap(Activity activity, String url, RequestMethod method, OnRequestListener onRequestListener, HashMap<String, String> params, boolean shouldUpdateCache, boolean shouldUpdateUi) {
-        super(url, method, onRequestListener, params);
-        this.shouldUpdateCache = shouldUpdateCache;
-        this.shouldUpdateUi = shouldUpdateUi;
-        context = activity;
-        getPixels(activity);
-        bitmapCache = new BitmapCache(activity);
-    }*/
-
 
     public RequestBitmap(Context context, String url, RequestMethod method, OnRequestListener onRequestListener) {
         this(context, url, method, onRequestListener, null);
@@ -88,28 +61,40 @@ public class RequestBitmap extends Request {
 
     @Override
     public void run() {
-        Bitmap result = null;
+        try {
+            Bitmap result = null;
 
-        if (judgeCache()) return;
+            if (judgeCache()) return;
 
-        switch (this.method) {
-            case GET:
-                result = get(url);
-                break;
+            switch (this.method) {
+                case GET:
+                    result = get(url);
+                    break;
+            }
+
+            if (result == null) {//结果为null则执行重复请求
+                resumeRequest();
+                return;
+            }
+
+            handler.setResult(result, result_type_succeed);
+
+            if (shouldCache) {//是否缓存
+                bitmapCache.savaBitmap(TimeUtils.getNow(), result, url);
+                LogUtils.w(getClass().getName(), "will cache and update the bitmap");
+            }
+
+            if (shouldUpdateUi) {//是否更新UI
+                handler.setResult(result, result_type_update_ui);
+                LogUtils.w(getClass().getName(), "will update Ui with bitmap");
+            }
+
+            setFinish(true);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            handler.setResult(e.getMessage(), result_type_failure);
         }
-        if (result == null) {
-            resumeRequest();
-            return;
-        }
-
-
-        handler.setResult(result, result_type_succeed);
-
-        if (shouldCache)//是否缓存
-            bitmapCache.savaBitmap(TimeUtils.getNow(), result, url);
-
-        if (shouldUpdateUi) //是否更新UI
-            handler.setResult(result, result_type_update_ui);
 
     }
 
@@ -121,11 +106,12 @@ public class RequestBitmap extends Request {
     private boolean judgeCache() {
         BitmapCache cache = new BitmapCache(context);
         if (cache.isFileExists(url)) {
-            LogUtils.d(getClass().getName(), "hava cache:" + url);
+            LogUtils.w(getClass().getName(), "hava cache:" + url);
             handler.setResult(cache.getBitmap(url), result_type_cache);
             if (!shouldUpdateCache)
                 return true;
         }
+        LogUtils.w(getClass().getName(), "no cache:" + url);
         return false;
     }
 

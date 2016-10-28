@@ -26,8 +26,18 @@ public class CacheHelper extends SQLiteOpenHelper {
     private String path = "path";//图片缓存的路径
     public static String tableName = "cache";//表名
 
+    private static CacheHelper cacheHelper;
 
-    public CacheHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+    public static final CacheHelper getInstance(Context context) {
+        if (cacheHelper == null) {
+            synchronized (CacheHelper.class) {
+                cacheHelper = new CacheHelper(context, "jcache.db", null, 1);
+            }
+        }
+        return cacheHelper;
+    }
+
+    private CacheHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
         getDataBase();
     }
