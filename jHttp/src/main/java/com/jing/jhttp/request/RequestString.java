@@ -34,20 +34,28 @@ public class RequestString extends Request {
 
     @Override
     public void run() {
-        String result = "";
-        switch (method) {
-            case GET:
-                result = get(url);
-                break;
-            case POST:
-                result = post(url, params);
-                break;
+
+        try {
+            String result = "";
+            switch (method) {
+                case GET:
+                    result = get(url);
+                    break;
+                case POST:
+                    result = post(url, params);
+                    break;
+            }
+            if (TextUtils.isEmpty(result)) {
+                resumeRequest();
+                return;
+            }
+            handler.setResult(result, result_type_succeed);
+
+            setFinish(true);//设置标识，标识请求完成
+        } catch (Exception e) {
+            e.printStackTrace();
+            handler.setResult(e.getMessage(), result_type_failure);
         }
-        if (TextUtils.isEmpty(result)) {
-            resumeRequest();
-            return;
-        }
-        handler.setResult(result, result_type_succeed);
 
     }
 

@@ -6,7 +6,7 @@ package com.jing.jhttp.listener;
 
 public interface OnRequestStringListener extends OnRequestListener<String> {
     @Override
-    void succeed(String o);
+    void succeed(String result);
 
     @Override
     void failure(String result);

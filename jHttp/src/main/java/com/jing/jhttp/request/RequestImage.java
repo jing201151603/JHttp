@@ -72,32 +72,40 @@ public class RequestImage extends Request {
 
     @Override
     public void run() {
-        Bitmap result = null;
+        try {
+            Bitmap result = null;
 
-        if (judgeCache()) return;
+            if (judgeCache()) return;
 
-        switch (this.method) {
-            case GET:
-                result = get(url);
-                break;
-        }
+            switch (this.method) {
+                case GET:
+                    result = get(url);
+                    break;
+            }
 
+            if (result == null) {//结果为null则执行重复请求
+                resumeRequest();
+                return;
+            }
 
-        if (result == null) {//结果为null则执行重复请求
-            resumeRequest();
-            return;
-        }
-
-        handler.setResult(result, result_type_update_imageview);
-
-        if (shouldCache) {//是否缓存
-            bitmapCache.savaBitmap(TimeUtils.getNow(), result, url);
-            LogUtils.w(getClass().getName(), "will cache and update the imageview");
-        }
-
-        if (shouldUpdateUi) { //是否更新UI
             handler.setResult(result, result_type_update_imageview);
-            LogUtils.w(getClass().getName(), "will update Ui with imageview");
+
+            if (shouldCache) {//是否缓存
+                bitmapCache.savaBitmap(TimeUtils.getNow(), result, url);
+                LogUtils.w(getClass().getName(), "will cache and update the imageview");
+            }
+
+            if (shouldUpdateUi) { //是否更新UI
+                handler.setResult(result, result_type_update_imageview);
+                LogUtils.w(getClass().getName(), "will update Ui with imageview");
+            }
+
+            setFinish(true);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            handler.setResult(e.getMessage(), result_type_failure);
         }
 
     }

@@ -32,7 +32,7 @@ public class Request implements Runnable {
     public final int result_type_update_imageview = 20;
     private int defaultRequestTimes = 3;//默认失败请求次数
     private int requestTimes = defaultRequestTimes;
-
+    protected boolean isFinish = false;
 
     protected JHandler handler = new JHandler() {
         @Override
@@ -63,6 +63,13 @@ public class Request implements Runnable {
         }
     };
 
+    public boolean isFinish() {
+        return isFinish;
+    }
+
+    public void setFinish(boolean finish) {
+        isFinish = finish;
+    }
 
     public Request(String url, RequestMethod method, OnRequestListener onRequestListener) {
         this.url = url;

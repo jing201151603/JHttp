@@ -6,7 +6,7 @@ package com.jing.jhttp.listener;
 
 public interface OnRequestBitmapListener extends OnRequestListener {
     @Override
-    void succeed(Object o);
+    void succeed(Object result);
 
     @Override
     void failure(String result);

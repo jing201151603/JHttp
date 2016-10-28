@@ -31,29 +31,6 @@ public class RequestBitmap extends Request {
     private BitmapCache bitmapCache = null;
     private Context context;
 
-    /*public RequestBitmap(Activity activity, String url, RequestMethod method, OnRequestListener onRequestListener) {
-        this(activity, url, method, onRequestListener, null);
-    }
-
-
-    public RequestBitmap(Activity activity, String url, RequestMethod method, OnRequestListener onRequestListener, HashMap<String, String> params) {
-        this(activity, url, method, onRequestListener, params, false);
-    }
-
-    public RequestBitmap(Activity activity, String url, RequestMethod method, OnRequestListener onRequestListener, HashMap<String, String> params, boolean shouldUpdateCache) {
-        this(activity, url, method, onRequestListener, params, shouldUpdateCache, false);
-    }
-
-    public RequestBitmap(Activity activity, String url, RequestMethod method, OnRequestListener onRequestListener, HashMap<String, String> params, boolean shouldUpdateCache, boolean shouldUpdateUi) {
-        super(url, method, onRequestListener, params);
-        this.shouldUpdateCache = shouldUpdateCache;
-        this.shouldUpdateUi = shouldUpdateUi;
-        context = activity;
-        getPixels(activity);
-        bitmapCache = new BitmapCache(activity);
-    }*/
-
-
     public RequestBitmap(Context context, String url, RequestMethod method, OnRequestListener onRequestListener) {
         this(context, url, method, onRequestListener, null);
     }
@@ -84,32 +61,39 @@ public class RequestBitmap extends Request {
 
     @Override
     public void run() {
-        Bitmap result = null;
+        try {
+            Bitmap result = null;
 
-        if (judgeCache()) return;
+            if (judgeCache()) return;
 
-        switch (this.method) {
-            case GET:
-                result = get(url);
-                break;
-        }
+            switch (this.method) {
+                case GET:
+                    result = get(url);
+                    break;
+            }
 
+            if (result == null) {//结果为null则执行重复请求
+                resumeRequest();
+                return;
+            }
 
-        if (result == null) {//结果为null则执行重复请求
-            resumeRequest();
-            return;
-        }
+            handler.setResult(result, result_type_succeed);
 
-        handler.setResult(result, result_type_succeed);
+            if (shouldCache) {//是否缓存
+                bitmapCache.savaBitmap(TimeUtils.getNow(), result, url);
+                LogUtils.w(getClass().getName(), "will cache and update the bitmap");
+            }
 
-        if (shouldCache) {//是否缓存
-            bitmapCache.savaBitmap(TimeUtils.getNow(), result, url);
-            LogUtils.w(getClass().getName(), "will cache and update the bitmap");
-        }
+            if (shouldUpdateUi) {//是否更新UI
+                handler.setResult(result, result_type_update_ui);
+                LogUtils.w(getClass().getName(), "will update Ui with bitmap");
+            }
 
-        if (shouldUpdateUi) {//是否更新UI
-            handler.setResult(result, result_type_update_ui);
-            LogUtils.w(getClass().getName(), "will update Ui with bitmap");
+            setFinish(true);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            handler.setResult(e.getMessage(), result_type_failure);
         }
 
     }

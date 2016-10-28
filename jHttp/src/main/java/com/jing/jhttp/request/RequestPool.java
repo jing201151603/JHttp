@@ -17,7 +17,7 @@ public class RequestPool extends AbstractPool {
         } catch (Exception e) {
             e.printStackTrace();
             LogUtils.e(tag, "add a request error --> " + request.toString() + ",error:" + e.getMessage());
-            throw new RuntimeException(e);
+
         }
     }
 
