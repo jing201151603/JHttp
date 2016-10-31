@@ -49,9 +49,11 @@ public class RequestString extends Request {
                 resumeRequest();
                 return;
             }
-            handler.setResult(result, result_type_succeed);
 
             setFinish(true);//设置标识，标识请求完成
+
+            handler.setResult(result, result_type_succeed);
+
         } catch (Exception e) {
             e.printStackTrace();
             handler.setResult(e.getMessage(), result_type_failure);

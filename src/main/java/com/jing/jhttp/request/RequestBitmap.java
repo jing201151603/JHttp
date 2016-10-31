@@ -77,6 +77,8 @@ public class RequestBitmap extends Request {
                 return;
             }
 
+            setFinish(true);
+
             handler.setResult(result, result_type_succeed);
 
             if (shouldCache) {//是否缓存
@@ -88,8 +90,6 @@ public class RequestBitmap extends Request {
                 handler.setResult(result, result_type_update_ui);
                 LogUtils.w(getClass().getName(), "will update Ui with bitmap");
             }
-
-            setFinish(true);
 
         } catch (Exception e) {
             e.printStackTrace();

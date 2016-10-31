@@ -2,6 +2,9 @@ package com.jing.jhttp.request;
 
 import android.graphics.Bitmap;
 import android.os.Message;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 
 import com.jing.jhttp.JHandler;
 import com.jing.jhttp.listener.OnRequestBitmapListener;
@@ -33,6 +36,7 @@ public class Request implements Runnable {
     private int defaultRequestTimes = 3;//默认失败请求次数
     private int requestTimes = defaultRequestTimes;
     protected boolean isFinish = false;
+    protected boolean isShowAnimation = true;//默认是显示动画的
 
     protected JHandler handler = new JHandler() {
         @Override
@@ -54,7 +58,14 @@ public class Request implements Runnable {
                         break;
                     case result_type_update_imageview:
                         if (getResult() == null) getImageView().setImageResource(getFailureImg());
-                        else getImageView().setImageBitmap((Bitmap) getResult());
+                        else {
+                            if (isShowAnimation) {//判断是否显示动画
+                                AlphaAnimation mHiddenAction = new AlphaAnimation(0.0f, 1.0f);
+                                mHiddenAction.setDuration(300);
+                                getImageView().startAnimation(mHiddenAction);
+                            }
+                            getImageView().setImageBitmap((Bitmap) getResult());
+                        }
                         break;
                 }
             } catch (Exception e) {

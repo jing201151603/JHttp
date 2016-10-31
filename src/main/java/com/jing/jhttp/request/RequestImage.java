@@ -88,6 +88,8 @@ public class RequestImage extends Request {
                 return;
             }
 
+            setFinish(true);
+
             handler.setResult(result, result_type_update_imageview);
 
             if (shouldCache) {//是否缓存
@@ -99,9 +101,6 @@ public class RequestImage extends Request {
                 handler.setResult(result, result_type_update_imageview);
                 LogUtils.w(getClass().getName(), "will update Ui with imageview");
             }
-
-            setFinish(true);
-
 
         } catch (Exception e) {
             e.printStackTrace();
