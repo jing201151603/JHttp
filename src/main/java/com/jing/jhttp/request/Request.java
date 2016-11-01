@@ -12,6 +12,7 @@ import com.jing.jhttp.listener.OnRequestListener;
 import com.jing.jhttp.utils.LogUtils;
 
 import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -25,7 +26,7 @@ public class Request implements Runnable {
     protected String defaultEncode = "UTF-8";
     protected String encode = defaultEncode;
     protected String url = "";
-    protected HashMap<String, String> params = null;
+    protected Map<String, String> params = null;
     protected OnRequestListener onRequestListener;
     protected RequestMethod method;
     public final int result_type_cache = 10;
@@ -88,7 +89,7 @@ public class Request implements Runnable {
         this.onRequestListener = onRequestListener;
     }
 
-    public Request(String url, RequestMethod method, OnRequestListener onRequestListener, HashMap<String, String> params) {
+    public Request(String url, RequestMethod method, OnRequestListener onRequestListener, Map<String, String> params) {
         this.url = url;
         this.params = params;
         this.onRequestListener = onRequestListener;
@@ -122,7 +123,7 @@ public class Request implements Runnable {
             setRequestTimes(getRequestTimes() - 1);
             RequestPool.getInstance().addRequest(this);
             LogUtils.d(getClass().getName(), "resume this request count:" + getRequestTimes());
-        } else handler.setResult("request times all failure", result_type_failure);
+        } else handler.setResult("request failure,maybe no network", result_type_failure);
         return;
     }
 

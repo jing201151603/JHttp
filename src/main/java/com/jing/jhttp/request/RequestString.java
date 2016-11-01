@@ -17,6 +17,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Created by bmc on 2016/10/17.
@@ -28,7 +29,7 @@ public class RequestString extends Request {
         super(url, method, onRequestListener);
     }
 
-    public RequestString(String url, RequestMethod method, OnRequestListener onRequestListener, HashMap<String, String> params) {
+    public RequestString(String url, RequestMethod method, OnRequestListener onRequestListener, Map<String, String> params) {
         super(url, method, onRequestListener, params);
     }
 
@@ -108,7 +109,7 @@ public class RequestString extends Request {
      * @param params
      * @return
      */
-    private String post(String url, HashMap<String, String> params) {
+    private String post(String url, Map<String, String> params) {
         InputStream inputStream = null;
         String result = "";
         HttpURLConnection connection = null;
@@ -153,7 +154,7 @@ public class RequestString extends Request {
         return post(url, null);
     }
 
-    private void postParam(OutputStream outputStream, HashMap<String, String> params) {
+    private void postParam(OutputStream outputStream, Map<String, String> params) {
         try {
             StringBuilder stringBuilder = new StringBuilder();
             Iterator<String> iterator = params.keySet().iterator();
