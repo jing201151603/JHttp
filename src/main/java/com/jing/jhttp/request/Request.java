@@ -117,7 +117,7 @@ public class Request implements Runnable {
      * 重复请求
      */
     protected void resumeRequest() {
-        handler.setResult("result is null,will request count=" + getRequestTimes(), result_type_failure);
+//        handler.setResult("result is null,will request count=" + getRequestTimes(), result_type_failure);
         if (getRequestTimes() > 0) {
             LogUtils.w(getClass().getName(), "will reconver this request,times:" + getRequestTimes());
             setRequestTimes(getRequestTimes() - 1);
