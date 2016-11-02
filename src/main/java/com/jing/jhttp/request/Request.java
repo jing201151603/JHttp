@@ -55,7 +55,8 @@ public class Request implements Runnable {
                         ((OnRequestBitmapListener) onRequestListener).updateUi(getResult());
                         break;
                     case result_type_failure:
-                        onRequestListener.failure((String) getResult());
+                        if (onRequestListener != null)
+                            onRequestListener.failure(getResultMsg());
                         break;
                     case result_type_update_imageview:
                         if (getResult() == null) getImageView().setImageResource(getFailureImg());
@@ -71,6 +72,7 @@ public class Request implements Runnable {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                LogUtils.e(getClass().getName(), e.getMessage());
             }
         }
     };
@@ -123,7 +125,7 @@ public class Request implements Runnable {
             setRequestTimes(getRequestTimes() - 1);
             RequestPool.getInstance().addRequest(this);
             LogUtils.d(getClass().getName(), "resume this request count:" + getRequestTimes());
-        } else handler.setResult("request failure,maybe no network", result_type_failure);
+        } else handler.setResultMsg("request failure,maybe no network", result_type_failure);
         return;
     }
 

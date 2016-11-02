@@ -93,7 +93,7 @@ public class RequestBitmap extends Request {
 
         } catch (Exception e) {
             e.printStackTrace();
-            handler.setResult(e.getMessage(), result_type_failure);
+            handler.setResultMsg(e.getMessage(), result_type_failure);
         }
 
     }
@@ -142,9 +142,9 @@ public class RequestBitmap extends Request {
         } catch (MalformedURLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            handler.setResult(e.getMessage(), result_type_failure);
+            handler.setResultMsg(e.getMessage(), result_type_failure);
         } catch (IOException e) {
-            handler.setResult(e.getMessage(), result_type_failure);
+            handler.setResultMsg(e.getMessage(), result_type_failure);
             e.printStackTrace();
         }
         return bitmap;

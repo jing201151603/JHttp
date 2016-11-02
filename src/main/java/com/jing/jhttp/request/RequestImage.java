@@ -104,7 +104,7 @@ public class RequestImage extends Request {
 
         } catch (Exception e) {
             e.printStackTrace();
-            handler.setResult(e.getMessage(), result_type_failure);
+            handler.setResultMsg(e.getMessage(), result_type_failure);
         }
 
     }
@@ -150,13 +150,10 @@ public class RequestImage extends Request {
 //            bitmap = BitmapFactory.decodeStream(is);
             bitmap = getBitmap(is);
             is.close();
-        } catch (MalformedURLException e) {
-            // TODO Auto-generated catch block
+        } catch (Exception e) {
+            handler.setResultMsg(e.getMessage(), result_type_failure);
             e.printStackTrace();
-            handler.setResult(e.getMessage(), result_type_failure);
-        } catch (IOException e) {
-            handler.setResult(e.getMessage(), result_type_failure);
-            e.printStackTrace();
+            LogUtils.e(getClass().getName(), e.getMessage());
         }
         return bitmap;
     }

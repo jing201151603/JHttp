@@ -2,6 +2,7 @@ package com.jing.jhttp;
 
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.widget.ImageView;
 
 /**
@@ -15,13 +16,24 @@ public class JHandler<T> extends Handler {
     private int failureImg;
 
     private T result;
+    private String msg = "";//错误信息
 
     public T getResult() {
         return result;
     }
 
+    public String getResultMsg() {
+        if (TextUtils.isEmpty(msg)) return "msg is null";
+        return msg;
+    }
+
     public void setResult(T result, int what) {
         this.result = result;
+        sendEmptyMessage(what);
+    }
+
+    public void setResultMsg(String result, int what) {
+        msg = result;
         sendEmptyMessage(what);
     }
 
