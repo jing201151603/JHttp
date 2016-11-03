@@ -1,15 +1,23 @@
 package com.jing.jhttp.request;
 
+import android.text.TextUtils;
 import android.util.Log;
 
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -27,15 +35,13 @@ public class UploadFile {
 
     private static final int TIME_OUT = 10 * 1000; // 超时时间
 
-    private static final String CHARSET = "utf-8"; // 设置编码
+    private static final String encode = "UTF-8"; // 设置编码
 
     /**
      * Android上传文件到服务端
      *
-     * @param file
-     *            需要上传的文件
-     * @param RequestURL
-     *            请求的rul
+     * @param file       需要上传的文件
+     * @param RequestURL 请求的rul
      * @return 返回响应的内容
      */
     public static String uploadFile(File file, String RequestURL) {
@@ -43,6 +49,9 @@ public class UploadFile {
         String BOUNDARY = UUID.randomUUID().toString(); // 边界标识 随机生成
         String PREFIX = "--", LINE_END = "\r\n";
         String CONTENT_TYPE = "multipart/form-data"; // 内容类型
+
+        InputStream inputStream = null, input = null;
+        DataOutputStream dataOutputStream = null;
 
         try {
             URL url = new URL(RequestURL);
@@ -53,16 +62,17 @@ public class UploadFile {
             conn.setDoOutput(true); // 允许输出流
             conn.setUseCaches(false); // 不允许使用缓存
             conn.setRequestMethod("POST"); // 请求方式
-            conn.setRequestProperty("Charset", CHARSET); // 设置编码
+            conn.setRequestProperty("Charset", encode); // 设置编码
             conn.setRequestProperty("connection", "keep-alive");
             conn.setRequestProperty("Content-Type", CONTENT_TYPE + ";boundary="
                     + BOUNDARY);
+
 
             if (file != null) {
                 /**
                  * 当文件不为空，把文件包装并且上传
                  */
-                DataOutputStream dos = new DataOutputStream(
+                dataOutputStream = new DataOutputStream(
                         conn.getOutputStream());
                 StringBuffer sb = new StringBuffer();
                 sb.append(PREFIX);
@@ -76,28 +86,27 @@ public class UploadFile {
                 sb.append("Content-Disposition: form-data; name=\"file\"; filename=\""
                         + file.getName() + "\"" + LINE_END);
                 sb.append("Content-Type: application/octet-stream; charset="
-                        + CHARSET + LINE_END);
+                        + encode + LINE_END);
                 sb.append(LINE_END);
-                dos.write(sb.toString().getBytes());
-                InputStream is = new FileInputStream(file);
+                dataOutputStream.write(sb.toString().getBytes());
+                inputStream = new FileInputStream(file);
                 byte[] bytes = new byte[1024];
                 int len = 0;
-                while ((len = is.read(bytes)) != -1) {
-                    dos.write(bytes, 0, len);
+                while ((len = inputStream.read(bytes)) != -1) {
+                    dataOutputStream.write(bytes, 0, len);
                 }
-                is.close();
-                dos.write(LINE_END.getBytes());
+                dataOutputStream.write(LINE_END.getBytes());
                 byte[] end_data = (PREFIX + BOUNDARY + PREFIX + LINE_END)
                         .getBytes();
-                dos.write(end_data);
-                dos.flush();
+                dataOutputStream.write(end_data);
+                dataOutputStream.flush();
                 /**
                  * 获取响应码 200=成功 当响应成功，获取响应的流
                  */
                 int res = conn.getResponseCode();
                 Log.e(tag, "response code:" + res);
                 Log.e(tag, "request success");
-                InputStream input = conn.getInputStream();
+                input = conn.getInputStream();
                 StringBuffer sb1 = new StringBuffer();
                 int ss;
                 while ((ss = input.read()) != -1) {
@@ -110,24 +119,42 @@ public class UploadFile {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (inputStream != null) try {
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (input != null) try {
+                input.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (dataOutputStream != null) try {
+                dataOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return result;
+    }
+
+    public static String post(String url, Map<String, String> params,
+                              List<File> files) throws IOException {
+        return post(url, params, files, "");
     }
 
     /**
      * 通过拼接的方式构造请求内容，实现参数传输以及文件传输
      *
-     * @param url
-     *            Service net address
-     * @param params
-     *            text content
-     * @param files
-     *            pictures
+     * @param url    Service net address
+     * @param params text content
+     * @param files  pictures
      * @return String result of Service response
      * @throws IOException
      */
     public static String post(String url, Map<String, String> params,
-                              Map<String, File> files) throws IOException {
+                              List<File> files, String tail) throws IOException {
         String BOUNDARY = java.util.UUID.randomUUID().toString();
         String PREFIX = "--", LINEND = "\r\n";
         String MULTIPART_FROM_DATA = "multipart/form-data";
@@ -135,7 +162,7 @@ public class UploadFile {
 
         URL uri = new URL(url);
         HttpURLConnection conn = (HttpURLConnection) uri.openConnection();
-        conn.setReadTimeout(10 * 1000); // 缓存的最长时间
+        conn.setReadTimeout(TIME_OUT); // 缓存的最长时间
         conn.setDoInput(true);// 允许输入
         conn.setDoOutput(true);// 允许输出
         conn.setUseCaches(false); // 不允许使用缓存
@@ -165,19 +192,19 @@ public class UploadFile {
         outStream.write(sb.toString().getBytes());
         // 发送文件数据
         if (files != null)
-            for (Map.Entry<String, File> file : files.entrySet()) {
+            for (File file : files) {
                 StringBuilder sb1 = new StringBuilder();
                 sb1.append(PREFIX);
                 sb1.append(BOUNDARY);
                 sb1.append(LINEND);
                 sb1.append("Content-Disposition: form-data; name=\"uploadfile\"; filename=\""
-                        + file.getValue().getName() + "\"" + LINEND);
+                        + file.getName() + tail + "\"" + LINEND);
                 sb1.append("Content-Type: application/octet-stream; charset="
                         + CHARSET + LINEND);
                 sb1.append(LINEND);
                 outStream.write(sb1.toString().getBytes());
 
-                InputStream is = new FileInputStream(file.getValue());
+                InputStream is = new FileInputStream(file);
                 byte[] buffer = new byte[1024];
                 int len = 0;
                 while ((len = is.read(buffer)) != -1) {

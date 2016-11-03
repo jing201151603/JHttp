@@ -119,10 +119,10 @@ public class RequestImage extends Request {
         if (cache.isFileExists(url)) {
             LogUtils.w(getClass().getName(), "hava cache:" + url);
             handler.setResult(cache.getBitmap(url), result_type_update_imageview);
-            if (!shouldUpdateCache)
-                return true;
+            return true;
+        } else {
+            LogUtils.w(getClass().getName(), "no cache:" + url);
         }
-        LogUtils.w(getClass().getName(), "no cache:" + url);
         return false;
     }
 
