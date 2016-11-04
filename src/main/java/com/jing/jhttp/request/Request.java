@@ -62,7 +62,7 @@ public class Request implements Runnable {
                         if (getResult() == null) getImageView().setImageResource(getFailureImg());
                         else {
                             if (isShowAnimation) {//判断是否显示动画
-                                AlphaAnimation mHiddenAction = new AlphaAnimation(0.0f, 1.0f);
+                                AlphaAnimation mHiddenAction = new AlphaAnimation(0.3f, 1.0f);
                                 mHiddenAction.setDuration(300);
                                 getImageView().startAnimation(mHiddenAction);
                             }
@@ -125,7 +125,7 @@ public class Request implements Runnable {
             setRequestTimes(getRequestTimes() - 1);
             RequestPool.getInstance().addRequest(this);
             LogUtils.d(getClass().getName(), "resume this request count:" + getRequestTimes());
-        } else handler.setResultMsg("request failure,maybe no network", result_type_failure);
+        } else handler.setResultMsg("请求超时", result_type_failure);
         return;
     }
 
