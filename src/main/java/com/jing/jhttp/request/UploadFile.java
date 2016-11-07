@@ -1,5 +1,6 @@
 package com.jing.jhttp.request;
 
+import android.os.CountDownTimer;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -31,11 +32,14 @@ import java.util.UUID;
 
 public class UploadFile {
 
-    private static final String tag = "UploadFile";
+    private final String tag = "UploadFile";
 
-    private static final int TIME_OUT = 10 * 1000; // 超时时间
+    private final int TIME_OUT = 10 * 1000; // 超时时间
 
-    private static final String encode = "UTF-8"; // 设置编码
+    private final String encode = "UTF-8"; // 设置编码
+
+    public UploadFile() {
+    }
 
     /**
      * Android上传文件到服务端
@@ -44,7 +48,7 @@ public class UploadFile {
      * @param RequestURL 请求的rul
      * @return 返回响应的内容
      */
-    public static String uploadFile(File file, String RequestURL) {
+    public String uploadFile(File file, String RequestURL) {
         String result = null;
         String BOUNDARY = UUID.randomUUID().toString(); // 边界标识 随机生成
         String PREFIX = "--", LINE_END = "\r\n";
@@ -139,8 +143,8 @@ public class UploadFile {
         return result;
     }
 
-    public static String post(String url, Map<String, String> params,
-                              List<File> files) throws IOException {
+    public String post(String url, Map<String, String> params,
+                       List<File> files) throws Exception {
         return post(url, params, files, "");
     }
 
@@ -153,8 +157,8 @@ public class UploadFile {
      * @return String result of Service response
      * @throws IOException
      */
-    public static String post(String url, Map<String, String> params,
-                              List<File> files, String tail) throws IOException {
+    public String post(String url, Map<String, String> params,
+                       List<File> files, String tail) throws Exception {
         String BOUNDARY = java.util.UUID.randomUUID().toString();
         String PREFIX = "--", LINEND = "\r\n";
         String MULTIPART_FROM_DATA = "multipart/form-data";
@@ -163,6 +167,7 @@ public class UploadFile {
         URL uri = new URL(url);
         HttpURLConnection conn = (HttpURLConnection) uri.openConnection();
         conn.setReadTimeout(TIME_OUT); // 缓存的最长时间
+        conn.setConnectTimeout(TIME_OUT);
         conn.setDoInput(true);// 允许输入
         conn.setDoOutput(true);// 允许输出
         conn.setUseCaches(false); // 不允许使用缓存
