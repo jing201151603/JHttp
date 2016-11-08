@@ -5,9 +5,11 @@ import android.text.TextUtils;
 import com.jing.jhttp.listener.OnRequestListener;
 import com.jing.jhttp.utils.LogUtils;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
@@ -52,7 +54,7 @@ public class RequestString extends Request {
             }
 
             setFinish(true);//设置标识，标识请求完成
-
+            result = new String(result.getBytes(encode));
             handler.setResult(result, result_type_succeed);
 
         } catch (Exception e) {
@@ -84,6 +86,7 @@ public class RequestString extends Request {
             connection.setDoOutput(false); //不允许输出流，即不允许上传，当需要传递参数时开启
             connection.setUseCaches(false); //不使用缓冲
             connection.setRequestProperty("Connection", "Keep-Alive");
+            connection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
             connection.connect();//发起请求
             inputStream = connection.getInputStream();
             result = inputStream2String(inputStream);
@@ -123,6 +126,7 @@ public class RequestString extends Request {
             connection.setDoOutput(true); //允许输出流，即允许上传，当需要传递参数时开启
             connection.setUseCaches(false); //不使用缓冲
             connection.setRequestProperty("Connection", "Keep-Alive");
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=" + encode);
             if (params != null)
                 postParam(connection.getOutputStream(), params);
             connection.connect();//发起请求
@@ -181,11 +185,11 @@ public class RequestString extends Request {
     private String inputStream2String(InputStream inputStream) {
         StringBuffer out = null;
         try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, encode));
             out = new StringBuffer();
-            byte[] b = new byte[4096];
-            int n;
-            while ((n = inputStream.read(b)) != -1) {
-                out.append(new String(b, 0, n));
+            String tempLine = null;
+            while ((tempLine = br.readLine()) != null) {
+                out.append(tempLine);
             }
             LogUtils.d(getClass().getName(), new Integer(out.length()).toString());
         } catch (IOException e) {
