@@ -9,6 +9,6 @@ import java.util.concurrent.Executors;
  */
 public abstract class AbstractPool {
 
-    protected final static ExecutorService pool = Executors.newFixedThreadPool(2);
+    protected final static ExecutorService pool = Executors.newFixedThreadPool(3);
 
 }
