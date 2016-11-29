@@ -22,7 +22,6 @@ public class SqlManager {
     }
 
     public CacheHelper getjChacheHelper(Context context) {
-//        CacheHelper jCacheHelper = new CacheHelper(context, "jcache.db", null, 1);
         CacheHelper jCacheHelper = CacheHelper.getInstance(context);
         return jCacheHelper;
     }

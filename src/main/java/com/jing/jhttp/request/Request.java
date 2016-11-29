@@ -125,7 +125,7 @@ public class Request implements Runnable {
             setRequestTimes(getRequestTimes() - 1);
             RequestPool.getInstance().addRequest(this);
             LogUtils.d(getClass().getName(), "resume this request count:" + getRequestTimes());
-        } else handler.setResultMsg("您的网络稳定哦！！！", result_type_failure);
+        } else handler.setResultMsg("您的网络不稳定哦！！！", result_type_failure);
         return;
     }
 
