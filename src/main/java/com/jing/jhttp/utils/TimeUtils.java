@@ -6,8 +6,8 @@ package com.jing.jhttp.utils;
 
 public class TimeUtils {
 
-    public static String getNow() {
-        return System.currentTimeMillis() + "";
+    public static long getNow() {
+        return System.currentTimeMillis();
     }
 
 }

@@ -93,7 +93,7 @@ public class RequestImage extends Request {
             handler.setResult(result, result_type_update_imageview);
 
             if (shouldCache) {//是否缓存
-                bitmapCache.savaBitmap(TimeUtils.getNow(), result, url);
+                bitmapCache.savaBitmap(TimeUtils.getNow()+"", result, url);
                 LogUtils.w(getClass().getName(), "will cache and update the imageview");
             }
 

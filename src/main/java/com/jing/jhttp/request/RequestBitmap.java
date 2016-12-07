@@ -82,7 +82,7 @@ public class RequestBitmap extends Request {
             handler.setResult(result, result_type_succeed);
 
             if (shouldCache) {//是否缓存
-                bitmapCache.savaBitmap(TimeUtils.getNow(), result, url);
+                bitmapCache.savaBitmap(TimeUtils.getNow()+"", result, url);
                 LogUtils.w(getClass().getName(), "will cache and update the bitmap");
             }
 
