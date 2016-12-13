@@ -59,7 +59,7 @@ public class RequestString extends Request {
 
         } catch (Exception e) {
             e.printStackTrace();
-            handler.setResultMsg(e.getMessage(), result_type_failure);
+            handler.setResultMsg(e.getMessage(), result_type_failure_msg);
         }
 
     }

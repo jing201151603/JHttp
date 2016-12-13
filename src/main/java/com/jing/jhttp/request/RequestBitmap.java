@@ -3,6 +3,7 @@ package com.jing.jhttp.request;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.provider.SyncStateContract;
 import android.view.WindowManager;
 
 import com.jing.jhttp.listener.OnRequestListener;
@@ -50,7 +51,7 @@ public class RequestBitmap extends Request {
         this.shouldUpdateUi = shouldUpdateUi;
         this.context = context;
         getPixels(context);
-        bitmapCache = new BitmapCache(context);
+        bitmapCache = new BitmapCache(context,context.getPackageName());
     }
 
     private void getPixels(Context context) {
@@ -93,7 +94,7 @@ public class RequestBitmap extends Request {
 
         } catch (Exception e) {
             e.printStackTrace();
-            handler.setResultMsg(e.getMessage(), result_type_failure);
+            handler.setResultMsg(e.getMessage(), result_type_failure_msg);
         }
 
     }
@@ -142,9 +143,9 @@ public class RequestBitmap extends Request {
         } catch (MalformedURLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            handler.setResultMsg(e.getMessage(), result_type_failure);
+            handler.setResultMsg(e.getMessage(), result_type_failure_msg);
         } catch (IOException e) {
-            handler.setResultMsg(e.getMessage(), result_type_failure);
+            handler.setResultMsg(e.getMessage(), result_type_failure_msg);
             e.printStackTrace();
         }
         return bitmap;

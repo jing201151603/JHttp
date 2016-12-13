@@ -1,14 +1,14 @@
 10
 
 dir
-31668
-svn://chenyj@210.14.133.181/core_touch/dxhj_android/TianLang/jHttp/src/main/java/com/jing/jhttp
+31780
+svn://chenyj@210.14.133.181/core_touch/dxhj_android/TianLang/JHttp/src/main/java/com/jing/jhttp
 svn://chenyj@210.14.133.181
 
 
 
-2016-12-03T05:26:33.102595Z
-31634
+2016-12-07T08:16:41.569443Z
+31780
 chenyj
 
 
@@ -37,14 +37,14 @@ dir
 
 JHandler.java
 file
+31964
 
 
 
-
-2016-12-06T02:51:35.000000Z
-937a54454ecfbbea10f15197e5de0cdb
-2016-11-02T06:36:52.656941Z
-29764
+2016-12-13T02:59:55.000000Z
+2a5970e4e9734ad70025484981c4ca77
+2016-12-13T03:14:09.476806Z
+31964
 chenyj
 
 
@@ -67,7 +67,7 @@ chenyj
 
 
 
-1331
+1946
 
 request
 dir

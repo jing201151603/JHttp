@@ -9,6 +9,7 @@ import android.view.animation.TranslateAnimation;
 import com.jing.jhttp.JHandler;
 import com.jing.jhttp.listener.OnRequestBitmapListener;
 import com.jing.jhttp.listener.OnRequestListener;
+import com.jing.jhttp.utils.CodeMsgUtils;
 import com.jing.jhttp.utils.LogUtils;
 
 import java.util.HashMap;
@@ -30,7 +31,8 @@ public class Request implements Runnable {
     protected OnRequestListener onRequestListener;
     protected RequestMethod method;
     public final int result_type_cache = 10;
-    public final int result_type_failure = 100;
+    public final int result_type_failure_msg = 100;//错误信息
+    public final int result_type_failure_code = 101;//错误码
     public final int result_type_succeed = 1000;
     public final int result_type_update_ui = 10000;
     public final int result_type_update_imageview = 20;
@@ -54,9 +56,13 @@ public class Request implements Runnable {
                     case result_type_update_ui:
                         ((OnRequestBitmapListener) onRequestListener).updateUi(getResult());
                         break;
-                    case result_type_failure:
+                    case result_type_failure_msg:
                         if (onRequestListener != null)
                             onRequestListener.failure(getResultMsg());
+                        break;
+                    case result_type_failure_code:
+                        if (onRequestListener != null)
+                            onRequestListener.failure(getResultCode() + "");
                         break;
                     case result_type_update_imageview:
                         if (getResult() == null) getImageView().setImageResource(getFailureImg());
@@ -125,7 +131,7 @@ public class Request implements Runnable {
             setRequestTimes(getRequestTimes() - 1);
             RequestPool.getInstance().addRequest(this);
             LogUtils.d(getClass().getName(), "resume this request count:" + getRequestTimes());
-        } else handler.setResultMsg("您的网络不稳定哦！！！", result_type_failure);
+        } else handler.setResultCode(CodeMsgUtils.Code.noNetwork, result_type_failure_code);
         return;
     }
 

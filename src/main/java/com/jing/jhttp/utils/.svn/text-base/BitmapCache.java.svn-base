@@ -38,14 +38,28 @@ public class BitmapCache {
      */
     private final static String FOLDER_NAME = "/jcache";
 
-
     public BitmapCache(Context context) {
-        this.context = context;
-        init(context);
+        this(context, context.getPackageName());
     }
 
-    private void init(Context context) {
-        mDataRootPath = context.getCacheDir().getPath();
+
+    public BitmapCache(Context context, String pkg) {
+        this.context = context;
+        init(context, pkg);
+    }
+
+    /**
+     * 当context为空时，根据报名设置缓存路径
+     *
+     * @param context
+     * @param pkg
+     */
+    private void init(Context context, String pkg) {
+        if (context != null)
+            mDataRootPath = context.getCacheDir().getPath();
+        else mDataRootPath = "/data/user/0/" + pkg + "/cache";
+//        mDataRootPath = "/data/data/" + pkg + "/cache";
+        LogUtils.w(getClass().getName(), "path=" + mDataRootPath);
     }
 
 

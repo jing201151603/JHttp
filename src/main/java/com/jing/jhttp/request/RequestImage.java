@@ -104,7 +104,7 @@ public class RequestImage extends Request {
 
         } catch (Exception e) {
             e.printStackTrace();
-            handler.setResultMsg(e.getMessage(), result_type_failure);
+            handler.setResultMsg(e.getMessage(), result_type_failure_msg);
         }
 
     }
@@ -152,7 +152,7 @@ public class RequestImage extends Request {
             bitmap = getBitmap(is);
             is.close();
         } catch (Exception e) {
-            handler.setResultMsg(e.getMessage(), result_type_failure);
+            handler.setResultMsg(e.getMessage(), result_type_failure_msg);
             e.printStackTrace();
             LogUtils.e(getClass().getName(), e.getMessage());
         }
