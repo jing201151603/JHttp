@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Environment;
+import android.text.TextUtils;
 
 import com.jing.jhttp.manager.JManager;
 import com.jing.jhttp.manager.SqlManager;
@@ -32,7 +33,7 @@ public class BitmapCache {
     /**
      * 手机的缓存根目录
      */
-    private static String mDataRootPath = null;
+    private static String mDataRootPath = "";
     /**
      * 保存Image的目录名
      */
@@ -45,7 +46,8 @@ public class BitmapCache {
 
     public BitmapCache(Context context, String pkg) {
         this.context = context;
-        init(context, pkg);
+        if (TextUtils.isEmpty(mDataRootPath))
+            init(context, pkg);
     }
 
     /**

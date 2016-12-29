@@ -1,8 +1,6 @@
 package com.jing.jhttp;
 
-import android.graphics.Bitmap;
 import android.os.Handler;
-import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.jing.jhttp.utils.CodeMsgUtils;
