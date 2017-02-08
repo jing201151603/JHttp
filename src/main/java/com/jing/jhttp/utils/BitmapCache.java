@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.text.TextUtils;
 
+import com.jing.jhttp.exception.ContextNullException;
 import com.jing.jhttp.manager.JManager;
 import com.jing.jhttp.manager.SqlManager;
 
@@ -39,27 +40,26 @@ public class BitmapCache {
      */
     private final static String FOLDER_NAME = "/jcache";
 
-    public BitmapCache(Context context) {
-        this(context, context.getPackageName());
-    }
 
-
-    public BitmapCache(Context context, String pkg) {
-        this.context = context;
-        if (TextUtils.isEmpty(mDataRootPath))
-            init(context, pkg);
+    public BitmapCache(Context context) throws ContextNullException {
+        if (context != null) {
+            this.context = context;
+            if (TextUtils.isEmpty(mDataRootPath))
+                init(context);
+        }else {
+            throw new ContextNullException("context connot be null!");
+        }
     }
 
     /**
      * 当context为空时，根据报名设置缓存路径
      *
      * @param context
-     * @param pkg
      */
-    private void init(Context context, String pkg) {
+    private void init(Context context) {
         if (context != null)
             mDataRootPath = context.getCacheDir().getPath();
-        else mDataRootPath = "/data/user/0/" + pkg + "/cache";
+        else mDataRootPath = "/data/user/0/" + context.getPackageName() + "/cache";
 //        mDataRootPath = "/data/data/" + pkg + "/cache";
         LogUtils.w(getClass().getName(), "path=" + mDataRootPath);
     }

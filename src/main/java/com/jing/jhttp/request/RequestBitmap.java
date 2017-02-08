@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.provider.SyncStateContract;
 import android.view.WindowManager;
 
+import com.jing.jhttp.exception.ContextNullException;
 import com.jing.jhttp.listener.OnRequestListener;
 import com.jing.jhttp.utils.BitmapCache;
 import com.jing.jhttp.utils.LogUtils;
@@ -47,11 +48,15 @@ public class RequestBitmap extends Request {
 
     public RequestBitmap(Context context, String url, RequestMethod method, OnRequestListener onRequestListener, HashMap<String, String> params, boolean shouldUpdateCache, boolean shouldUpdateUi) {
         super(url, method, onRequestListener, params);
-        this.shouldUpdateCache = shouldUpdateCache;
-        this.shouldUpdateUi = shouldUpdateUi;
-        this.context = context;
-        getPixels(context);
-        bitmapCache = new BitmapCache(context,context.getPackageName());
+        try {
+            this.shouldUpdateCache = shouldUpdateCache;
+            this.shouldUpdateUi = shouldUpdateUi;
+            this.context = context;
+            getPixels(context);
+            bitmapCache = new BitmapCache(context);
+        } catch (ContextNullException e) {
+            e.printStackTrace();
+        }
     }
 
     private void getPixels(Context context) {
@@ -83,7 +88,7 @@ public class RequestBitmap extends Request {
             handler.setResult(result, result_type_succeed);
 
             if (shouldCache) {//是否缓存
-                bitmapCache.savaBitmap(TimeUtils.getNow()+"", result, url);
+                bitmapCache.savaBitmap(TimeUtils.getNow() + "", result, url);
                 LogUtils.w(getClass().getName(), "will cache and update the bitmap");
             }
 
@@ -105,14 +110,18 @@ public class RequestBitmap extends Request {
      * @return
      */
     private boolean judgeCache() {
-        BitmapCache cache = new BitmapCache(context);
-        if (cache.isFileExists(url)) {
-            LogUtils.w(getClass().getName(), "hava cache:" + url);
-            handler.setResult(cache.getBitmap(url), result_type_cache);
-            if (!shouldUpdateCache)
-                return true;
+        try {
+            BitmapCache cache = new BitmapCache(context);
+            if (cache.isFileExists(url)) {
+                LogUtils.w(getClass().getName(), "hava cache:" + url);
+                handler.setResult(cache.getBitmap(url), result_type_cache);
+                if (!shouldUpdateCache)
+                    return true;
+            }
+            LogUtils.w(getClass().getName(), "no cache:" + url);
+        } catch (ContextNullException e) {
+            e.printStackTrace();
         }
-        LogUtils.w(getClass().getName(), "no cache:" + url);
         return false;
     }
 
