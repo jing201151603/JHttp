@@ -1,0 +1,80 @@
+10
+
+dir
+33699
+svn://chenyj@210.14.133.181/core_touch/dxhj_android/TianLangTest/JHttp/src/main/java/com/jing/jhttp
+svn://chenyj@210.14.133.181
+
+
+
+2017-02-15T02:13:20.070659Z
+33699
+chenyj
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+88ecd0ea-9416-11e1-baea-d76f28cd78d8
+
+helper
+dir
+
+utils
+dir
+
+listener
+dir
+
+JHandler.java
+file
+
+
+
+
+2017-02-15T02:25:01.000000Z
+aa28f2f08fb7e97cbbe02d9efba85519
+2017-02-15T02:13:20.070659Z
+33699
+chenyj
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1881
+
+request
+dir
+
+manager
+dir
+
+exception
+dir
+
