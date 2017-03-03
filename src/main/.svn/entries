@@ -1,14 +1,14 @@
 10
 
 dir
-33699
-svn://chenyj@210.14.133.181/core_touch/dxhj_android/TianLangTest/JHttp/src/main
+34569
+svn://chenyj@210.14.133.181/core_touch/dxhj_android/forum/ForumClient/JHttp/src/main
 svn://chenyj@210.14.133.181
 
 
 
-2017-02-15T02:13:20.070659Z
-33699
+2017-03-01T11:16:32.390101Z
+34526
 chenyj
 
 
@@ -26,40 +26,6 @@ chenyj
 
 88ecd0ea-9416-11e1-baea-d76f28cd78d8
 
-.DS_Store
-file
-
-
-
-
-2017-02-15T02:25:01.000000Z
-fff6a584e334f77b2bf96adcd335ce7a
-2017-02-15T02:13:20.070659Z
-33699
-chenyj
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-8196
-
 java
 dir
 
@@ -69,10 +35,10 @@ file
 
 
 
-2017-02-15T02:25:01.000000Z
+2017-03-02T06:54:22.000000Z
 2d332e54277061e4c8b65ee56dd6c5e8
-2017-02-15T02:13:20.070659Z
-33699
+2017-03-01T04:14:46.762926Z
+34475
 chenyj
 
 

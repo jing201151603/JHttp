@@ -151,6 +151,7 @@ public class UploadFile {
      */
     public String post(String url, Map<String, String> params,
                        List<File> files, String tail) throws Exception {
+        LogUtils.w(getClass().getName(), "files=" + files);
         int finishCount = 0;//上传完成的个数
         String BOUNDARY = java.util.UUID.randomUUID().toString();
         String PREFIX = "--", LINEND = "\r\n";
