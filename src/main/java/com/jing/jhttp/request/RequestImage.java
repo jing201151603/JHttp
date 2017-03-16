@@ -174,7 +174,7 @@ public class RequestImage extends Request {
         //这3句是处理图片溢出的begin( 如果不需要处理溢出直接 opts.inSampleSize=1;)
         opts.inJustDecodeBounds = true;
         BitmapFactory.decodeByteArray(bytes, 0, bytes.length, opts);
-        opts.inSampleSize = 4;//缩放4倍
+        opts.inSampleSize = 2;//缩放4倍
         //end
         opts.inJustDecodeBounds = false;
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.length, opts);
