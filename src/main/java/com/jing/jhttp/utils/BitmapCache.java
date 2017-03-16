@@ -6,14 +6,19 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.view.WindowManager;
 
 import com.jing.jhttp.exception.ContextNullException;
 import com.jing.jhttp.manager.JManager;
 import com.jing.jhttp.manager.SqlManager;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -23,6 +28,7 @@ import java.util.List;
 public class BitmapCache {
 
     private Context context;
+    private int displaypixels;
 
 
     /**
@@ -44,9 +50,11 @@ public class BitmapCache {
     public BitmapCache(Context context) throws ContextNullException {
         if (context != null) {
             this.context = context;
+            WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+            displaypixels = wm.getDefaultDisplay().getWidth() * wm.getDefaultDisplay().getHeight();
             if (TextUtils.isEmpty(mDataRootPath))
                 init(context);
-        }else {
+        } else {
             throw new ContextNullException("context connot be null!");
         }
     }
@@ -174,8 +182,46 @@ public class BitmapCache {
      */
     public Bitmap getBitmap(String url) {
         String fileName = SqlManager.getInstance().getjChacheHelper(context).getKey(url);
-        return BitmapFactory.decodeFile(getStorageDirectory() + File.separator + fileName);
+
+        try {
+            return getBitmap(new FileInputStream(getStorageDirectory() + File.separator + fileName));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+//        return BitmapFactory.decodeFile(getStorageDirectory() + File.separator + fileName);
+        return null;
+
+
     }
+
+    private Bitmap getBitmap(InputStream stream) {
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        byte[] bytes = getBytes(stream);
+        //这3句是处理图片溢出的begin( 如果不需要处理溢出直接 opts.inSampleSize=1;)
+        opts.inJustDecodeBounds = true;
+        BitmapFactory.decodeByteArray(bytes, 0, bytes.length, opts);
+        opts.inSampleSize = 4;
+        //end
+        opts.inJustDecodeBounds = false;
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length, opts);
+    }
+
+    private byte[] getBytes(InputStream is) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] b = new byte[2048];
+        int len = 0;
+        try {
+            while ((len = is.read(b, 0, 2048)) != -1) {
+                baos.write(b, 0, len);
+                baos.flush();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        byte[] bytes = baos.toByteArray();
+        return bytes;
+    }
+
 
     /**
      * 判断文件是否存在

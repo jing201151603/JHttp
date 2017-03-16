@@ -174,53 +174,11 @@ public class RequestImage extends Request {
         //这3句是处理图片溢出的begin( 如果不需要处理溢出直接 opts.inSampleSize=1;)
         opts.inJustDecodeBounds = true;
         BitmapFactory.decodeByteArray(bytes, 0, bytes.length, opts);
-        opts.inSampleSize = computeSampleSize(opts, -1, displaypixels);
+        opts.inSampleSize = 4;//缩放4倍
         //end
         opts.inJustDecodeBounds = false;
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.length, opts);
 
-    }
-
-    /****
-     * 处理图片bitmap size exceeds VM budget （Out Of Memory 内存溢出）
-     */
-    private int computeSampleSize(BitmapFactory.Options options,
-                                  int minSideLength, int maxNumOfPixels) {
-        int initialSize = computeInitialSampleSize(options, minSideLength,
-                maxNumOfPixels);
-
-        int roundedSize;
-        if (initialSize <= 8) {
-            roundedSize = 1;
-            while (roundedSize < initialSize) {
-                roundedSize <<= 1;
-            }
-        } else {
-            roundedSize = (initialSize + 7) / 8 * 8;
-        }
-        return roundedSize;
-    }
-
-    private int computeInitialSampleSize(BitmapFactory.Options options,
-                                         int minSideLength, int maxNumOfPixels) {
-        double w = options.outWidth;
-        double h = options.outHeight;
-        int lowerBound = (maxNumOfPixels == -1) ? 1 : (int) Math.ceil(Math
-                .sqrt(w * h / maxNumOfPixels));
-        int upperBound = (minSideLength == -1) ? 128 : (int) Math.min(
-                Math.floor(w / minSideLength), Math.floor(h / minSideLength));
-
-        if (upperBound < lowerBound) {
-            return lowerBound;
-        }
-
-        if ((maxNumOfPixels == -1) && (minSideLength == -1)) {
-            return 1;
-        } else if (minSideLength == -1) {
-            return lowerBound;
-        } else {
-            return upperBound;
-        }
     }
 
 

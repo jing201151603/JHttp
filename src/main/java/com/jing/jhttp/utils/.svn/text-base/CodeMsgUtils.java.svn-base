@@ -13,6 +13,7 @@ public class CodeMsgUtils {
 
     public static class Code {
         public final static int noNetwork = 400;
+        public final static int time_out = 500;
     }
 
     /**
@@ -26,6 +27,9 @@ public class CodeMsgUtils {
         switch (code) {
             case Code.noNetwork:
                 msg = "你的网络不稳定";
+                break;
+            case Code.time_out:
+                msg = "请求超时";
                 break;
         }
         return msg;
